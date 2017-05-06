@@ -1,39 +1,33 @@
-language: java
-
-jdk:
-  - oraclejdk8
-
 addons:
   apt:
     packages:
-      - oracle-java8-installer # Updates JDK 8 to the latest available.
-
+    - oracle-java8-installer
+before_install:
+- wget https://dl.dropboxusercontent.com/u/7897865/apache-maven-3.3.9.zip
+- unzip -qq apache-maven-3.3.9.zip
+- export M2_HOME=$PWD/apache-maven-3.3.9
+- export PATH=$M2_HOME/bin:$PATH
 before_script:
-  - ./gen_tests.sh
-  - if [ ! -z "$(git status --porcelain)" ]; then git diff; echo -e "\nTest files changed. Did you run gen_tests.sh?"; exit 1; fi
-
-after_success:
-  - .buildscript/deploy_snapshot.sh
-
-env:
-  global:
-    - secure: "eNNY7wruuGZLSZLJQdNZOs/cAzMjrHRTUtYRR9XgwRVxUoXWzWjiqDn9ISTU7pGXogsja3qGP4POA6AaKWr4DR0ZO7o9hCO5YWPm5c0odUpGXZDNW2ffTrWDZfvU/L/ktxTEaV6IpyDScOw+O2Er2uyEsw7EuLCWOxkBHd797qM="
-    - secure: "jJaloDUA4BUXmp7HKKOp8ATufaPxfMBxY8DaMiN1VaNo+VlbNPj30TUz9G0oWRhaByypjkqUxZcxpcwFsxKCdw/HF53YqFGEV9D2aF6337dRfx/5ZGNQ6wVPNncEyzfvAdliwEqKlGP+MkPnA4Hy2UjOWtWgtl+uJaM8/5najBE="
-
+- ./gen_tests.sh
+- if [ ! -z "$(git status --porcelain)" ]; then git diff; echo -e "\nTest files changed. Did you run gen_tests.sh?"; exit 1; fi
 branches:
   except:
-    - gh-pages
-
-notifications:
-  email: false
-
-sudo: false
-
+  - gh-pages
 cache:
   directories:
-    - $HOME/.m2
-before_install:
-  - wget https://dl.dropboxusercontent.com/u/7897865/apache-maven-3.3.9.zip
-  - unzip -qq apache-maven-3.3.9.zip
-  - export M2_HOME=$PWD/apache-maven-3.3.9
-  - export PATH=$M2_HOME/bin:$PATH
+  - $HOME/.m2
+env:
+  global:
+  - secure: eNNY7wruuGZLSZLJQdNZOs/cAzMjrHRTUtYRR9XgwRVxUoXWzWjiqDn9ISTU7pGXogsja3qGP4POA6AaKWr4DR0ZO7o9hCO5YWPm5c0odUpGXZDNW2ffTrWDZfvU/L/ktxTEaV6IpyDScOw+O2Er2uyEsw7EuLCWOxkBHd797qM=
+  - secure: jJaloDUA4BUXmp7HKKOp8ATufaPxfMBxY8DaMiN1VaNo+VlbNPj30TUz9G0oWRhaByypjkqUxZcxpcwFsxKCdw/HF53YqFGEV9D2aF6337dRfx/5ZGNQ6wVPNncEyzfvAdliwEqKlGP+MkPnA4Hy2UjOWtWgtl+uJaM8/5najBE=
+jdk:
+- oraclejdk8
+language: java
+notifications:
+  email: false
+  slack:
+    rooms: flakycov:U2MeVOPjdi4up1U793ubeIUZ
+    template:
+    - Build <%{build_url}|#%{build_number}> (<%{compare_url}|%{commit}>) of %{repository}@%{branch} by %{author} %{result} in %{duration}
+    - 'dashbot: %{repository_name} %{build_id}'
+sudo: false
