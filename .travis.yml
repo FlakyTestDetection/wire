@@ -9,7 +9,7 @@ before_install:
 - export PATH=$M2_HOME/bin:$PATH
 before_script:
 - ./gen_tests.sh
-- if [ ! -z "$(git status --porcelain)" ]; then git diff; echo -e "\nTest files changed. Did you run gen_tests.sh?"; exit 1; fi
+#- if [ ! -z "$(git status --porcelain)" ]; then git diff; echo -e "\nTest files changed. Did you run gen_tests.sh?"; exit 1; fi
 branches:
   except:
   - gh-pages
